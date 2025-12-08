@@ -1792,24 +1792,6 @@ function groupSelectedObjects() {
     group.userData.isSelectable = true;
     group.userData.isEditorGroup = true;
     group.name = parentObj.name || "Attached " + Date.now();
-    
-    // Preserve wClass and twObjectIx from parent object to the group
-    if (parentObj.userData?.wClass !== undefined) {
-        group.userData.wClass = parentObj.userData.wClass;
-    }
-    if (parentObj.userData?.twObjectIx !== undefined) {
-        group.userData.twObjectIx = parentObj.userData.twObjectIx;
-    }
-    
-    // Store original wClass and twObjectIx for parent object
-    if (!parentObj.userData)
-        parentObj.userData = {};
-    if (parentObj.userData.wClass !== undefined) {
-        parentObj.userData.originalWClass = parentObj.userData.wClass;
-    }
-    if (parentObj.userData.twObjectIx !== undefined) {
-        parentObj.userData.originalTwObjectIx = parentObj.userData.twObjectIx;
-    }
 
     // Store parent object's world transform to preserve visual position
     const parentWorldPosition = new THREE.Vector3();
@@ -1823,6 +1805,14 @@ function groupSelectedObjects() {
     group.position.copy(parentObj.position);
     group.quaternion.copy(parentObj.quaternion);
     group.scale.copy(parentObj.scale);
+
+    // Preserve twObjectIx and wClass from parent object to the group
+    if (parentObj.userData?.twObjectIx !== undefined) {
+        group.userData.twObjectIx = parentObj.userData.twObjectIx;
+    }
+    if (parentObj.userData?.wClass !== undefined) {
+        group.userData.wClass = parentObj.userData.wClass;
+    }
 
     // Remove parent object from scene and add it as first child of group
     scene.remove(parentObj);
@@ -1867,14 +1857,6 @@ function groupSelectedObjects() {
             obj.userData = {};
         obj.userData.originalListType = obj.userData.listType || (obj instanceof THREE.Group ? "group" : "model");
         obj.userData.originalName = obj.name;
-        
-        // Store original wClass and twObjectIx for children
-        if (obj.userData.wClass !== undefined) {
-            obj.userData.originalWClass = obj.userData.wClass;
-        }
-        if (obj.userData.twObjectIx !== undefined) {
-            obj.userData.originalTwObjectIx = obj.userData.twObjectIx;
-        }
         if (obj.userData.boxHelper) {
             scene.remove(obj.userData.boxHelper);
             delete obj.userData.boxHelper;
@@ -1931,6 +1913,7 @@ function ungroupSelectedObject() {
     const groupParent = group.parent || scene;
     const wasInParentGroup = groupParent && groupParent !== scene && groupParent.userData?.isEditorGroup;
 
+    let isFirstChild = true;
     while (group.children.length > 0) {
         const child = group.children[0];
 
@@ -1941,6 +1924,17 @@ function ungroupSelectedObject() {
             groupParent.attach(child);
         }
 
+        // Restore twObjectIx and wClass from group to the first child (parent object)
+        if (isFirstChild) {
+            if (group.userData?.twObjectIx !== undefined) {
+                child.userData.twObjectIx = group.userData.twObjectIx;
+            }
+            if (group.userData?.wClass !== undefined) {
+                child.userData.wClass = group.userData.wClass;
+            }
+            isFirstChild = false;
+        }
+
         createBoxHelperFor(child);
         // Hide the child's bounding box after detaching
         setHelperVisible(child, false);
@@ -1949,14 +1943,6 @@ function ungroupSelectedObject() {
         if (child.userData?.originalName)
             child.name = child.userData.originalName;
         const listType = child.userData?.originalListType || child.userData?.listType || (child instanceof THREE.Group ? "group" : "model");
-        
-        // Restore original wClass and twObjectIx if they were stored
-        if (child.userData?.originalWClass !== undefined) {
-            child.userData.wClass = child.userData.originalWClass;
-        }
-        if (child.userData?.originalTwObjectIx !== undefined) {
-            child.userData.twObjectIx = child.userData.originalTwObjectIx;
-        }
 
         // Sidebar will be rebuilt below if we're in a parent group
         // Otherwise add to root of sidebar
@@ -1969,8 +1955,6 @@ function ungroupSelectedObject() {
 
         delete child.userData?.originalListType;
         delete child.userData?.originalName;
-        delete child.userData?.originalWClass;
-        delete child.userData?.originalTwObjectIx;
 
         // Update visuals without clamping to preserve local positions during detaching
         updateModelProperties(child);
@@ -2042,14 +2026,6 @@ function detachFromGroup(obj, skipSelection=false) {
     if (obj.userData?.originalName)
         obj.name = obj.userData.originalName;
     const listType = obj.userData?.originalListType || obj.userData?.listType || (obj instanceof THREE.Group ? "group" : "model");
-    
-    // Restore original wClass and twObjectIx if they were stored
-    if (obj.userData?.originalWClass !== undefined) {
-        obj.userData.wClass = obj.userData.originalWClass;
-    }
-    if (obj.userData?.originalTwObjectIx !== undefined) {
-        obj.userData.twObjectIx = obj.userData.originalTwObjectIx;
-    }
 
     // Sidebar will be rebuilt below if we're in a parent group
     // Otherwise add to root of sidebar
@@ -2062,8 +2038,6 @@ function detachFromGroup(obj, skipSelection=false) {
 
     delete obj.userData?.originalListType;
     delete obj.userData?.originalName;
-    delete obj.userData?.originalWClass;
-    delete obj.userData?.originalTwObjectIx;
 
     // Update visuals without clamping to preserve local positions during detaching
     updateModelProperties(obj);
@@ -2186,6 +2160,14 @@ function cleanupEmptyParentGroups(parentGroup) {
             // Restore the parent object's transform and add it back to scene
             scene.attach(parentObject);
 
+            // Restore twObjectIx and wClass from group to the parent object
+            if (parentGroup.userData?.twObjectIx !== undefined) {
+                parentObject.userData.twObjectIx = parentGroup.userData.twObjectIx;
+            }
+            if (parentGroup.userData?.wClass !== undefined) {
+                parentObject.userData.wClass = parentGroup.userData.wClass;
+            }
+
             // Restore original sidebar representation
             // For the parent object (first child), it might not have originalName/originalListType
             // so we use the group's name and determine type based on object type
@@ -2197,14 +2179,6 @@ function cleanupEmptyParentGroups(parentGroup) {
             }
 
             const listType = parentObject.userData?.originalListType || (parentObject instanceof THREE.Group && parentObject.userData?.isEditorGroup ? "group" : "model");
-            
-            // Restore original wClass and twObjectIx if they were stored
-            if (parentObject.userData?.originalWClass !== undefined) {
-                parentObject.userData.wClass = parentObject.userData.originalWClass;
-            }
-            if (parentObject.userData?.originalTwObjectIx !== undefined) {
-                parentObject.userData.twObjectIx = parentObject.userData.originalTwObjectIx;
-            }
 
             if (listType === "group") {
                 addGroupToList(parentObject, parentObject.name || "Attached");
@@ -2215,8 +2189,6 @@ function cleanupEmptyParentGroups(parentGroup) {
             // Clean up the metadata
             delete parentObject.userData?.originalListType;
             delete parentObject.userData?.originalName;
-            delete parentObject.userData?.originalWClass;
-            delete parentObject.userData?.originalTwObjectIx;
 
             // Create box helper for the restored object
             createBoxHelperFor(parentObject);
@@ -2444,6 +2416,14 @@ function createGroupFromDragDrop(draggedObj, targetObj) {
     group.quaternion.copy(targetObj.quaternion);
     group.scale.copy(targetObj.scale);
 
+    // Preserve twObjectIx and wClass from target object to the group
+    if (targetObj.userData?.twObjectIx !== undefined) {
+        group.userData.twObjectIx = targetObj.userData.twObjectIx;
+    }
+    if (targetObj.userData?.wClass !== undefined) {
+        group.userData.wClass = targetObj.userData.wClass;
+    }
+
     // Remember if target was in a parent group
     const targetParent = targetObj.parent;
     const wasInGroup = targetParent && targetParent.userData?.isEditorGroup;
@@ -2571,14 +2551,6 @@ function addObjectToGroup(obj, group) {
         obj.userData = {};
     obj.userData.originalListType = obj.userData.listType || (obj instanceof THREE.Group ? "group" : "model");
     obj.userData.originalName = obj.name;
-    
-    // Store original wClass and twObjectIx for the object being added
-    if (obj.userData.wClass !== undefined) {
-        obj.userData.originalWClass = obj.userData.wClass;
-    }
-    if (obj.userData.twObjectIx !== undefined) {
-        obj.userData.originalTwObjectIx = obj.userData.twObjectIx;
-    }
 
     // Clean up existing helpers
     if (obj.userData.boxHelper) {
@@ -2675,6 +2647,14 @@ function createGroupFromMultipleDragDrop(draggedObjects, targetObj) {
     group.position.copy(targetObj.position);
     group.quaternion.copy(targetObj.quaternion);
     group.scale.copy(targetObj.scale);
+
+    // Preserve twObjectIx and wClass from target object to the group
+    if (targetObj.userData?.twObjectIx !== undefined) {
+        group.userData.twObjectIx = targetObj.userData.twObjectIx;
+    }
+    if (targetObj.userData?.wClass !== undefined) {
+        group.userData.wClass = targetObj.userData.wClass;
+    }
 
     // Remember if target was in a parent group
     const targetParent = targetObj.parent;
@@ -4220,9 +4200,8 @@ function buildNode (obj)
 
    if (obj instanceof THREE.Group)
    {
-      // For editor groups, include all children (including the parent object as first child)
-      // so that wClass and twObjectIx values are preserved in the JSON hierarchy
-      const childrenToExport = obj.children;
+      // For editor groups, skip the first child (parent object) and only export other children
+      const childrenToExport = obj.userData?.isEditorGroup === true ? obj.children.slice(1) : obj.children;
 
       childrenToExport.forEach
       (
@@ -4639,14 +4618,6 @@ async function processNodeHierarchically(node, parent, existingObjects, processe
                     childObject.userData = {};
                 childObject.userData.originalListType = childObject.userData.listType || (childObject instanceof THREE.Group ? "group" : "model");
                 childObject.userData.originalName = childObject.name;
-                
-                // Store original wClass and twObjectIx for the child
-                if (childObject.userData.wClass !== undefined) {
-                    childObject.userData.originalWClass = childObject.userData.wClass;
-                }
-                if (childObject.userData.twObjectIx !== undefined) {
-                    childObject.userData.originalTwObjectIx = childObject.userData.twObjectIx;
-                }
 
                 // Store expected local position from JSON for comparison
                 if (childNode.pTransform?.aPosition) {
