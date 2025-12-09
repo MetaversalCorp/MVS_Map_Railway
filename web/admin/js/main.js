@@ -5275,7 +5275,7 @@ async function getObjectFiles() {
     try {
         // Construct URL relative to current page location to handle both http and file protocols
         // If running through server, use absolute path; otherwise construct from current location
-        let jsonUrl = '/objects/objects.json';
+        let jsonUrl = 'objects/objects.json';
 
         // If we're on file:// protocol, we can't fetch - return empty and show error
         if (window.location.protocol === 'file:') {
@@ -5286,7 +5286,7 @@ async function getObjectFiles() {
 
         // Construct full URL if needed (for relative paths)
         if (!jsonUrl.startsWith('http')) {
-            jsonUrl = new URL(jsonUrl, window.location.origin).href;
+            jsonUrl = new URL(window.location.href + jsonUrl).href;
         }
 
         console.log('Fetching objects.json from:', jsonUrl);
@@ -5451,7 +5451,7 @@ function createObjectLibraryItem(objectPath) {
     // Click handler to add object to scene
     card.addEventListener('click', async () => {
         try {
-            const fullPath = `/objects/${objectPath}`;
+            const fullPath = `objects/${objectPath}`;
             const gltf = await new Promise((resolve, reject) => {
                 loader.load(fullPath, resolve, undefined, reject);
             });
@@ -5461,7 +5461,7 @@ function createObjectLibraryItem(objectPath) {
             model.name = objectName;
 
             // Track original source - use full path format /objects/filename.glb for sReference
-            const referencePath = `/objects/${objectPath}`;
+            const referencePath = `objects/${objectPath}`;
             model.userData.sourceRef = {
                 originalFileName: objectPath,
                 baseName: objectName,
@@ -5499,7 +5499,7 @@ function createObjectLibraryItem(objectPath) {
 
     // Create preview after adding to DOM
     setTimeout(() => {
-        createObjectPreview(`/objects/${objectPath}`, previewContainer);
+        createObjectPreview(`objects/${objectPath}`, previewContainer);
     }, 100);
 
     return col;
