@@ -15,7 +15,7 @@ function MemResult (pResult, result)
 {
    pResult.nResult = result.output.nResult;
 
-   if (pResult.nResult == 0)
+   if (pResult.nResult === 0)
    {
       pResult.Parent = JSON.parse (result.recordsets[0][0].Object);
       pResult.aChild = [];
@@ -56,7 +56,7 @@ function RunQuery (Session, pData, fnRSP, fn, pSQLData)
          {
             if (result != null)
             {
-               if (pSQLData.Param == 0)
+               if (pSQLData.Param === 0)
                   MemResult (pResult, result);
                else
                   RawResult (pResult, result);
@@ -86,7 +86,7 @@ function RunQuery2Ex (Session, pData, fnRSP, fn, bRecover, pSQLData)
                if (result != null)
                {
                   // TODO: Only Join the socket and send recover IF we are not subscribed
-                  if (bRecover && result.output.nResult == 0)
+                  if (bRecover && result.output.nResult === 0)
                   {
                      pObjectHead = JSON.parse (result.recordsets[0][0].Object).pObjectHead;
 
@@ -102,7 +102,7 @@ function RunQuery2Ex (Session, pData, fnRSP, fn, bRecover, pSQLData)
                   }
                   else
                   {
-if (pSQLData.Param == 0)
+if (pSQLData.Param === 0)
    MemResult (pResult, result);
 else
    RawResult (pResult, result);
@@ -132,7 +132,7 @@ function RunQuery2 (Session, pData, fnRSP, fn, pSQLData)
 **                                                     Initialization                                                         **
 *******************************************************************************************************************************/
 
-function EventQueue (pServer)
+function EventQueue (_pServer)
 {
    g_nTimeout = 0;
 
@@ -142,7 +142,7 @@ function EventQueue (pServer)
    (
       (result) =>
       {
-         if (result != null && result.output.nResult == 0 && result.recordsets.length == 2)
+         if (result != null && result.output.nResult === 0 && result.recordsets.length === 2)
          {
             let aRow = result.recordsets[0];
 
@@ -166,7 +166,7 @@ function EventQueue (pServer)
 
 function EventFetch ()
 {
-   if (g_nTimeout == 0)
+   if (g_nTimeout === 0)
    {
       g_nTimeout = setTimeout (EventQueue, 100);
    }

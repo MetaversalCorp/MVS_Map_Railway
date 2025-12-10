@@ -5,14 +5,14 @@ const { RunQuery2, RunQuery2Ex  } = require ('../utils.js');
 **                                                     Internal                                                               **
 *******************************************************************************************************************************/
 
-const g_awClass_Data = 
+const g_awClass_Data =
 {
     70:  {                 // SBM_CLASS_RMROOT
-            sParam: '',                    
+            sParam: '',
             sProc:  'get_RMRoot_Update'
          },
     71:  {                 // SBM_CLASS_RMCObject
-            sParam: 'twRMCObjectIx', 
+            sParam: 'twRMCObjectIx',
             sProc:  'get_RMCObject_Update'
          },
     72:  {                 // SBM_CLASS_RMTObject
@@ -29,9 +29,9 @@ class HndlrRMBase extends MVHANDLER
 {
    constructor ()
    {
-      super 
+      super
       (
-         null, 
+         null,
          null,
          null,
          {
@@ -53,20 +53,20 @@ class HndlrRMBase extends MVHANDLER
 
       if (pData.wClass_Object && g_awClass_Data[pData.wClass_Object])
       {
-         if (g_awClass_Data[pData.wClass_Object].sParam != '')
+         if (g_awClass_Data[pData.wClass_Object].sParam !== '')
          {
             aParam = [ g_awClass_Data[pData.wClass_Object].sParam ];
             pParam[g_awClass_Data[pData.wClass_Object].sParam] = pData.twObjectIx;
          }
          else aParam = [];
 
-         RunQuery2Ex 
+         RunQuery2Ex
          (
-            Session, 
-            pParam, 
-            fnRSP, 
-            fn, 
-            true, 
+            Session,
+            pParam,
+            fnRSP,
+            fn,
+            true,
             {
                sProc: g_awClass_Data[pData.wClass_Object].sProc,
                aData: aParam,
@@ -76,7 +76,7 @@ class HndlrRMBase extends MVHANDLER
       }
    }
 
-   Unsubscribe (pConn, Session, pData, fnRSP, fn)
+   Unsubscribe (pConn, Session, pData, _fnRSP, _fn)
    {
       if (Session.pSocket)
          Session.pSocket.leave (pData.wClass_Object + '-' + pData.twObjectIx);

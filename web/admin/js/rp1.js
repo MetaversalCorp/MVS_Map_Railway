@@ -20,7 +20,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
    };
 
    eSTATE = ExtractMap.eSTATE;
-   constructor (jSelector, sURL, wClass_Object, twObjectIx, pLnGPrimary)
+   constructor (jSelector, sURL, wClass_Object, twObjectIx, _pLnGPrimary)
    {
       super ();
 
@@ -29,8 +29,8 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       this.nStack = 0;
       this.#twObjectIx_PendingDelete = 0;
 
-      this.#m_wClass_Object = (wClass_Object == 0) ? 71 : wClass_Object;
-      this.#m_twObjectIx    = (twObjectIx == 0)  ? 1 : twObjectIx;
+      this.#m_wClass_Object = (wClass_Object === 0) ? 71 : wClass_Object;
+      this.#m_twObjectIx    = (twObjectIx === 0)  ? 1 : twObjectIx;
 
       this.xCollator = new Intl.Collator ();
 
@@ -66,7 +66,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       }
    }
 
-   onInserted (pNotice)
+   onInserted (_pNotice)
    {
       if (this.IsReady ())
       {
@@ -93,7 +93,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
    {
       if (this.IsReady ())
       {
-         if (pNotice.pData.wClass_Object == 73 && pNotice.pData.twObjectIx == this.#twObjectIx_PendingDelete)
+         if (pNotice.pData.wClass_Object === 73 && pNotice.pData.twObjectIx === this.#twObjectIx_PendingDelete)
          {
             this.#twObjectIx_PendingDelete = 0;
          }
@@ -114,7 +114,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
    {
       let Result = null;
 
-      if (Item.twObjectIx == pRMXObject.twObjectIx || Item.twObjectIx == pRMXObject.twParentIx)
+      if (Item.twObjectIx === pRMXObject.twObjectIx || Item.twObjectIx === pRMXObject.twParentIx)
          Result = Item;
       else
       {
@@ -128,7 +128,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
    {
       let Result = {
          twObjectIx:    pRMXObject.twObjectIx,
-         wClass:        pRMXObject.wClass_Object, 
+         wClass:        pRMXObject.wClass_Object,
          sName:         pRMXObject.pName.wsRMPObjectId,
          pTransform:    {
             aPosition: [
@@ -156,7 +156,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
          aChildren:     []
       };
 
-      if (bRoot == false)
+      if (!bRoot)
       {
          Result.pResource = {
             sReference:    pRMXObject.pResource.sReference
@@ -168,11 +168,11 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
 
    ParseTree (aEditor, pRMXObject)
    {
-      let Node = this.PObjectToJSON (pRMXObject, (pRMXObject.wClass_Parent == 70));
+      let Node = this.PObjectToJSON (pRMXObject, (pRMXObject.wClass_Parent === 70));
       let apRMXObject = [];
 
       aEditor.push (Node);
-      
+
       pRMXObject.Child_Enum ('RMPObject', this, this.EnumItem, apRMXObject);
 
       for (let n=0; n < apRMXObject.length; n++)
@@ -196,7 +196,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       let bDone = true;
       for (let sKey in this.#m_MapRMXItem)
       {
-         if (this.#m_MapRMXItem[sKey].IsReady () == false)
+         if (! this.#m_MapRMXItem[sKey].IsReady ())
             bDone = false;
       }
 
@@ -210,14 +210,14 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
 
    IsReady ()
    {
-      return this.ReadyState () == this.eSTATE.READY;
+      return this.ReadyState () === this.eSTATE.READY;
    }
 
    onReadyState (pNotice)
    {
-      if (this.IsReady () == false)
+      if (! this.IsReady ())
       {
-         if (pNotice.pCreator == this.#m_pFabric)
+         if (pNotice.pCreator === this.#m_pFabric)
          {
             if (this.#m_pFabric.IsReady ())
             {
@@ -226,9 +226,9 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
          }
          else if (pNotice.pCreator.IsReady ())
          {
-            if (this.ReadyState () == this.eSTATE.NOTREADY)
+            if (this.ReadyState () === this.eSTATE.NOTREADY)
             {
-               if (pNotice.pCreator.wClass_Object == 70) // RMRoot
+               if (pNotice.pCreator.wClass_Object === 70) // RMRoot
                {
                   let mpPObject = [];
 
@@ -238,7 +238,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
                   {
                      let sSelected = '';
 
-                     if (i == 0)
+                     if (i === 0)
                      {
                         this.#pRMXRoot = mpPObject[i];
                         sSelected = ' selected';
@@ -256,16 +256,16 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
                   else this.ReadyState (this.eSTATE.READY); // No Scenes
                }
             }
-            else if (this.ReadyState () == this.eSTATE.LOADING)
+            else if (this.ReadyState () === this.eSTATE.LOADING)
             {
-               if (pNotice.pCreator.wClass_Object == 73)
+               if (pNotice.pCreator.wClass_Object === 73)
                {
                   let aPObject = [];
                   pNotice.pCreator.Child_Enum ('RMPObject', this, this.EnumItem, aPObject);
 
                   for (let i=0; i < aPObject.length; i++)
                   {
-                     if (this.#m_MapRMXItem['73' + '-' + aPObject[i].twObjectIx] == undefined)
+                     if (this.#m_MapRMXItem['73' + '-' + aPObject[i].twObjectIx] === undefined)
                      {
                         this.#m_MapRMXItem['73' + '-' + aPObject[i].twObjectIx] = aPObject[i];
                         aPObject[i].Attach (this);
@@ -281,8 +281,8 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
             }
          }
       }
-      else if (this.#pRMXPending && pNotice.pCreator.IsReady () && 
-               pNotice.pCreator.wClass_Object == this.#pRMXPending.wClass_Object && pNotice.pCreator.twObjectIx == this.#pRMXPending.twObjectIx)
+      else if (this.#pRMXPending && pNotice.pCreator.IsReady () &&
+               pNotice.pCreator.wClass_Object === this.#pRMXPending.wClass_Object && pNotice.pCreator.twObjectIx === this.#pRMXPending.twObjectIx)
       {
          this.#bPending = false;
       }
@@ -295,13 +295,13 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       if (this.#m_pLnG == null)
       {
          this.#m_pLnG = this.#m_pFabric.GetLnG ("map");
-         if (this.#m_wClass_Object == 70)
+         if (this.#m_wClass_Object === 70)
             sID = 'RMRoot';
-         else if (this.#m_wClass_Object == 71)
+         else if (this.#m_wClass_Object === 71)
             sID = 'RMCObject';
-         else if (this.#m_wClass_Object == 72)
+         else if (this.#m_wClass_Object === 72)
             sID = 'RMTObject';
-         else if (this.#m_wClass_Object == 73)
+         else if (this.#m_wClass_Object === 73)
             sID = 'RMPObject';
 
          this.#m_MapRMXItem[this.#m_wClass_Object + '-' + this.#m_twObjectIx] = this.#m_pLnG.Model_Open (sID, this.#m_twObjectIx);
@@ -309,12 +309,12 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       }
    }
 
-   onClick_Scene (e)
+   onClick_Scene (_e)
    {
       let jOption = this.#jPObject.find ("option:selected");
       let twObjectIx = jOption.val ();
 
-      if (this.#m_MapRMXItem['73' + '-' + twObjectIx] == undefined)
+      if (this.#m_MapRMXItem['73' + '-' + twObjectIx] === undefined)
       {
          this.#m_MapRMXItem['73' + '-' + twObjectIx] = this.#m_pLnG.Model_Open ('RMPObject', twObjectIx);
          this.#pRMXRoot = this.#m_MapRMXItem['73' + '-' + twObjectIx];
@@ -324,7 +324,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       {
          this.#pRMXRoot = this.#m_MapRMXItem['73' + '-' + twObjectIx];
          this.UpdateScene ();
-      } 
+      }
    }
 
    UpdateView ()
@@ -337,7 +337,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
 
       if (pJSON.pType)
       {
-         pType.bType     = pJSON.pType.bType;   
+         pType.bType     = pJSON.pType.bType;
          pType.bSubtype  = pJSON.pType.bSubtype;
          pType.bFiction  = pJSON.pType.bFiction;
          pType.bMovable  = pJSON.pType.bMovable;
@@ -397,12 +397,12 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
          pTransform.vPosition.dX   = pJSON.pTransform.aPosition[0];
          pTransform.vPosition.dY   = pJSON.pTransform.aPosition[1];
          pTransform.vPosition.dZ   = pJSON.pTransform.aPosition[2];
-                                 
+
          pTransform.qRotation.dX   = pJSON.pTransform.aRotation[0];
          pTransform.qRotation.dY   = pJSON.pTransform.aRotation[1];
          pTransform.qRotation.dZ   = pJSON.pTransform.aRotation[2];
          pTransform.qRotation.dW   = pJSON.pTransform.aRotation[3];
-                                 
+
          pTransform.vScale.dX      = pJSON.pTransform.aScale[0];
          pTransform.vScale.dY      = pJSON.pTransform.aScale[1];
          pTransform.vScale.dZ      = pJSON.pTransform.aScale[2];
@@ -427,9 +427,9 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       return bResult;
    }
 
-   onRSPGeneric (pIAction, Param)
+   onRSPGeneric (pIAction, _Param)
    {
-      if (pIAction.pResponse.nResult == 0)
+      if (pIAction.pResponse.nResult === 0)
       {
       }
       else console.log ('ERROR: ' + pIAction.pResponse.nResult, pIAction);
@@ -503,9 +503,9 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       this.RMPEditTransform (pRMPObject, pJSON);
    }
 
-   onRSPOpen (pIAction, Param)
+   onRSPOpen (pIAction, _Param)
    {
-      if (pIAction.pResponse.nResult == 0)
+      if (pIAction.pResponse.nResult === 0)
       {
          this.#pRMXPending = this.#m_pLnG.Model_Open ('RMPObject', pIAction.pResponse.aResultSet[0][0].twRMPObjectIx);
          this.#m_MapRMXItem['73' + '-' + pIAction.pResponse.aResultSet[0][0].twRMPObjectIx] = this.#pRMXPending;
@@ -514,23 +514,23 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       }
       else
       {
-         console.log ('ERROR: Creating Object - ' + pIAction.pResponse.nResult);         
+         console.log ('ERROR: Creating Object - ' + pIAction.pResponse.nResult);
 
          this.#pRMXPending = null;
          this.#bPending = false;
       }
    }
 
-   onRSPParent (pIAction, Param)
+   onRSPParent (pIAction, _Param)
    {
-      if (pIAction.pResponse.nResult == 0)
+      if (pIAction.pResponse.nResult === 0)
       {
          this.bReparent = false;
          console.log ('SUCCESS: Parent');
       }
       else
       {
-         console.log ('ERROR: Parent - ' + pIAction.pResponse.nResult);         
+         console.log ('ERROR: Parent - ' + pIAction.pResponse.nResult);
 
          this.bReparent = false;
       }
@@ -570,10 +570,10 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
 
    CheckClose ()
    {
-      return (this.#twObjectIx_PendingDelete == 0); // True means stop, False continues
+      return (this.#twObjectIx_PendingDelete === 0); // True means stop, False continues
    }
 
-   async UpdateRMPObject (pJSONObject, pRMXObject_Parent, mpRemovedNodes, bRoot)
+   async UpdateRMPObject (pJSONObject, pRMXObject_Parent, mpRemovedNodes, _bRoot)
    {
       let bResult;
       let pRMPObject;
@@ -583,7 +583,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       {
          pRMPObject = this.#m_MapRMXItem['73' + '-' + pJSONObject.twObjectIx];
 
-         if (pRMPObject && pRMPObject.twParentIx == pRMXObject_Parent.twObjectIx && pRMPObject.wClass_Parent == pRMXObject_Parent.wClass_Object)
+         if (pRMPObject && pRMPObject.twParentIx === pRMXObject_Parent.twObjectIx && pRMPObject.wClass_Parent === pRMXObject_Parent.wClass_Object)
          {
             this.RMPEditAll (pRMPObject, pJSONObject);
          }
@@ -675,9 +675,9 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
 
          if (pJSONObject)
          {
-            for (i=0; i < pJSONObject.aChildren.length && pJSONObject.aChildren[i].twObjectIx != apRMXObject[n].twObjectIx; i++);
+            for (i=0; i < pJSONObject.aChildren.length && pJSONObject.aChildren[i].twObjectIx !== apRMXObject[n].twObjectIx; i++);
 
-            if (i == pJSONObject.aChildren.length)
+            if (i === pJSONObject.aChildren.length)
             {
                mpRemovedNodes[apRMXObject[n].twObjectIx] = apRMXObject[n];
                pJSONObjectX = null;
@@ -690,9 +690,9 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       }
    }
 
-   onRSPClose (pIAction, Param)
+   onRSPClose (pIAction, _Param)
    {
-      if (pIAction.pResponse.nResult == 0)
+      if (pIAction.pResponse.nResult === 0)
       {
       }
       else
@@ -712,7 +712,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       {
          let pRMPObject = this.#m_MapRMXItem['73' + '-' + twObjectIx];
          delete this.#m_MapRMXItem['73' + '-' + twObjectIx];
-         
+
          pRMPObject.Detach (this);
 
          let pRMXObject_Parent = this.#m_MapRMXItem[pRMPObject.wClass_Parent + '-' + pRMPObject.twParentIx];
@@ -743,7 +743,7 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
       let pJSONObject = JSON.parse (sJSON);
 
       this.nStack = 0;
-      if (pJSONObject[0].twObjectIx == this.#pRMXRoot.twObjectIx)
+      if (pJSONObject[0].twObjectIx === this.#pRMXRoot.twObjectIx)
       {
          let mpRemovedNodes = {};
 
@@ -758,4 +758,4 @@ class ExtractMap extends MV.MVMF.NOTIFICATION
          this.UpdateRMPObject (pJSONObject[0], this.#m_MapRMXItem[this.#m_wClass_Object + '-' + this.#m_twObjectIx], mpRemovedNodes, true);
       }
    }
-};
+}

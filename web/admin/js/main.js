@@ -2245,7 +2245,7 @@ function handleDragStart(e) {
     e.dataTransfer.setData('text/plain', objectId);
 }
 
-function handleDragEnd(e) {
+function handleDragEnd(_e) {
     // Clean up drag state and visual feedback for all dragged objects
     draggedObjects.forEach(obj => {
         if (obj.userData.listItem) {
@@ -3076,7 +3076,7 @@ function setCanvasSize() {
     updateJSONEditor();
 }
 
-canvasSizeInput.addEventListener("change", e => {
+canvasSizeInput.addEventListener("change", _e => {
     setCanvasSize();
 }
 );
@@ -4801,7 +4801,7 @@ async function updateOrCreateObject(node, parent, existingObjects, processedObje
         // but different sName (for unique identification)
         let modelToReuse = null;
         if (sReference) {
-            for (const [key,existingObj] of existingObjects) {
+            for (const [_key,existingObj] of existingObjects) {
                 if (existingObj.userData?.sourceRef?.reference === sReference) {
                     modelToReuse = existingObj;
                     break;
@@ -5554,7 +5554,7 @@ if (objLibPanel) {
     // Cleanup previews when panel is hidden
     objLibPanel.addEventListener('hidden.bs.offcanvas', function () {
         // Cleanup preview renderers to free memory
-        objectLibraryCache.forEach(({ renderer, scene, camera }) => {
+        objectLibraryCache.forEach(({ renderer, scene, _camera }) => {
             // Dispose of geometries and materials
             scene.traverse((object) => {
                 if (object.geometry) object.geometry.dispose();

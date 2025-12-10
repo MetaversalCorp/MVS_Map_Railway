@@ -152,7 +152,7 @@ class MVSF_Map
       return aStatements;
    }
 
-   async InitializeDatabase (pMVSQL)
+   async InitializeDatabase (_pMVSQL)
    {
       const sDatabaseName = 'MVD_RP1_Map';
       const sSQLFile = path.join (__dirname, 'MVD_RP1_Map.sql');
