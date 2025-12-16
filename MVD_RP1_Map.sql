@@ -40,36 +40,6 @@ USE MVD_RP1_Map;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~                                                                                                                            ~~
-~~                                                   MVD_RP1_Map : db_update.sql                                                  ~~
-~~                                                                                                                            ~~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~                            Copyright (c) 2023-2025 Metaversal Corporation. All rights reserved.                            ~~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
- Create the update table
-*/
-
-CREATE TABLE db_update (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    script_name VARCHAR(255) NOT NULL UNIQUE,
-    applied_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    checksum    VARCHAR(64) NULL,
-    comment     VARCHAR(255) NULL
-);
-
-
-INSERT INTO db_update (script_name, checksum, comment)
-VALUES
-  ('0000_init_db_update_table.sql', NULL, 'Baseline full build includes 0000'),
-  ('0001_create_admin_table.sql',   NULL, 'Baseline full build includes 0001'),
-  ('0002_update_functions.sql',     NULL, 'Baseline full build includes 0002'),
-  ('0003_update_procedures.sql',    NULL, 'Baseline full build includes 0003');
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~                                                                                                                            ~~
 ~~                                                   MVD_RP1_Map : Admin.sql                                                  ~~
 ~~                                                                                                                            ~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3731,9 +3701,9 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMPObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMPOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMPObjectIx_Close;
+                   FROM RMPObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMPOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMPObjectIx_Close;
 
                      IF twRMPObjectIx_Close <= 0
                    THEN
@@ -7618,9 +7588,9 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMTObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMPObjectIx_Close;
+                   FROM RMTObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMPObjectIx_Close;
 
                      IF twRMPObjectIx_Close <= 0
                    THEN
@@ -7888,14 +7858,14 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMTObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
+                   FROM RMTObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
 
                  SELECT COUNT(*) + nCount INTO nCount
-                   FROM RMPObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
+                   FROM RMPObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
 
                      IF twRMTObjectIx_Close <= 0
                    THEN
@@ -11115,14 +11085,14 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMCObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMCOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMCObjectIx_Close;
+                   FROM RMCObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMCOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMCObjectIx_Close;
 
                  SELECT COUNT(*) + nCount INTO nCount
-                   FROM RMTObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMCOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMCObjectIx_Close;
+                   FROM RMTObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMCOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMCObjectIx_Close;
 
                      IF twRMCObjectIx_Close <= 0
                    THEN
@@ -11400,9 +11370,9 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMTObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
+                   FROM RMTObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
 
                      IF twRMTObjectIx_Close <= 0
                    THEN
@@ -13234,9 +13204,9 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMCObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMCOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMCObjectIx_Close;
+                   FROM RMCObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMCOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMCObjectIx_Close;
 
                      IF twRMCObjectIx_Close <= 0
                    THEN
@@ -13514,9 +13484,9 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMPObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMPOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMPObjectIx_Close;
+                   FROM RMPObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMPOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMPObjectIx_Close;
 
                      IF twRMPObjectIx_Close <= 0
                    THEN
@@ -13784,9 +13754,9 @@ BEGIN
             IF nError = 0
           THEN
                  SELECT COUNT(*) INTO nCount
-                   FROM RMTObject
-                  WHERE ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
-                    AND ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
+                   FROM RMTObject AS o
+                  WHERE o.ObjectHead_Parent_wClass     = SBO_CLASS_RMTOBJECT
+                    AND o.ObjectHead_Parent_twObjectIx = twRMTObjectIx_Close;
 
                      IF twRMTObjectIx_Close <= 0
                    THEN
@@ -14115,4 +14085,3 @@ DELIMITER ;
 CALL init_DefaultScene ();
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
